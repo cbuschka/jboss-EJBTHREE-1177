@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+
+<project default="patch-it">
+	<target name="patch-it">
+		<property name="jboss.server.dir" location="${jboss.home.dir}/server/default"/>
+		<property name="patch.src.dir" location="${basedir}/src"/>
+		<property name="patch.temp.dir" location="${basedir}/tmp"/>
+		<property name="patch.temp.classes.dir" location="${patch.temp.dir}/classes"/>
+		<property name="patch.target.jar" location="${jboss.server.dir}/lib/jboss.jar"/>
+		<property name="patch.target.jar.copy" location="${jboss.server.dir}/lib/jboss.jar.orig"/>
+		<property name="patch.id" value="EJBTHREE-1177"/>
+		<delete dir="${patch.temp.dir}"/>
+		<mkdir dir="${patch.temp.dir}"/>
+		<mkdir dir="${patch.temp.classes.dir}"/>
+
+		<!-- compile the patch -->
+		<echo>Compiling the patch...</echo>
+		<javac includeantruntime="false" srcdir="${patch.src.dir}" includes="**/*.java" destdir="${patch.temp.classes.dir}" source="1.6" target="1.6">
+			<classpath>
+				<fileset dir="${jboss.home.dir}/lib" includes="*.jar"/>
+				<fileset dir="${jboss.server.dir}/lib" includes="*.jar"/>
+			</classpath>
+		</javac>
+		<echo file="${patch.temp.classes.dir}/WITH_PATCH_${patch.id}"/>
+
+		<!-- save the target jar -->
+		<echo>Backing up target to ${patch.target.jar.copy}...</echo>
+		<copy file="${patch.target.jar}" tofile="${patch.target.jar.copy}"/>
+
+		<!-- apply the patch -->
+		<echo>Patching ${patch.target.jar}...</echo>
+		<jar destfile="${patch.target.jar}" update="true">
+			<fileset dir="${patch.temp.classes.dir}" includes="**"/>
+		</jar>
+
+		<!-- Clean up -->
+		<delete dir="${patch.temp.dir}"/>
+
+		<echo>Successfully patched.</echo>
+	</target>
+</project>
