@@ -1,6 +1,6 @@
 This fixed EJBTHREE-1177
 
-https://jira.jboss.org/jira/browse/EJBTHREE-1177
+https://issues.redhat.com/browse/EJBTHREE-1177
 
 Wrong "in method flag" on stack after first invocation of a jca endpoint
 
